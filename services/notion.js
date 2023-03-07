@@ -12,27 +12,33 @@ const today = new Date().toISOString().slice(0, 10)
 module.exports = async function getPomo() {
 
   const { results } = await notion.databases.query({
-    database_id: `${database_id}`
-    // filter: {
-    //   "and": [
-    //     {
-    //       "property": "Date",
-    //       "date": {
-    //         "is_not_empty": true,
-    //         "before": today
-    //       }
-    //     },
-    //     {
-    //       "property": "Status",
-    //       "status": {
-    //         "equals": 'Done'
-    //       }
-    //     },]
-    // },
-    // sorts: [{
-    //   "property": "Date",
-    //   "direction": "ascending"
-    // }]
+    database_id: `${database_id}`,
+    filter: {
+      "and": [
+        {
+          "property": "Sports",
+          "select": {
+            "is_not_empty": true
+          }
+        },
+        {
+          "or": [
+            {
+              "property": "Name",
+              "rich_text": {
+                "starts_with": '2023'
+              }
+            },
+            {
+              "property": "Name",
+              "rich_text": {
+                "starts_with": '2022'
+              }
+            }
+          ]
+        }
+      ]
+    }
   })
 
 
