@@ -2,86 +2,86 @@
 <html lang="en">
 
 <head>
-  <script src="https://d3js.org/d3.v7.min.js"></script>
-  <script src="https://unpkg.com/cal-heatmap/dist/cal-heatmap.min.js"></script>
-  <link rel="stylesheet" href="https://unpkg.com/cal-heatmap/dist/cal-heatmap.css">
-  <script src="https://unpkg.com/cal-heatmap/dist/plugins/Legend.min.js"></script>
-  <script src="https://unpkg.com/@popperjs/core@2"></script>
-  <script src="https://unpkg.com/cal-heatmap/dist/plugins/Tooltip.min.js"></script>
-  <sript src="./js/main.js"></sript>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <title>Fitness Tracker</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://unpkg.com/cal-heatmap/dist/cal-heatmap.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/cal-heatmap/dist/cal-heatmap.css">
+    <script src="https://unpkg.com/cal-heatmap/dist/plugins/Legend.min.js"></script>
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
+    <script src="https://unpkg.com/cal-heatmap/dist/plugins/Tooltip.min.js"></script>
+    <sript src="./js/main.js"></sript>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Fitness Tracker</title>
 </head>
 
 <body>
-  <h1 class="text-3xl font-bold underline text-center">
-    Fitness Tracker
-  </h1>
-  <div id="cal-heatmap" class="flex justify-center items-center my-4 text-lg"></div>
-  <div id="legend-label" class="flex justify-center items-center"></div>
-  <script>
-    const cal = new CalHeatmap();
-    cal.paint({
-      data: {
-        source: '/api/daily-sports',
-        type: "json",
-        x: "date",
-        y: "sport",
-        groupY: d => d[0]
-      },
-      domain: {
-        type: 'month',
-        gutter: 8,
-        label: { text: 'MMM', textAlign: 'middle', position: 'top' },
-        subLabel: {
-          width: 40,
-          textAlign: 'middle',
-          text: () => dayjs.weekdaysShort().map((d, i) => (i % 2 == 0 ? d : d)),
-        },
-      },
-      subDomain: {
-        type: 'ghDay',
-        radius: 2,
-        width: 15,
-        height: 15,
-        label: 'D',
-        gutter: 4
-      },
-      date: {
-        start: new Date('2022-12-25'),
-        timezone: 'Europe/Zurich'
-      },
-      range: 12,
-      scale: {
-        color: {
-          domain: ['Fitness', 'Swimming', 'Football', 'Hiking', 'Running', 'Cycling', 'Yoga', 'HIIT', 'Others'],
-          type: 'ordinal',
-          scheme: 'Spectral',
-        }
-      }
-    }, [
-      [
-        Tooltip,
-        {
-          text: function (date, value, dayjsDate) {
-            return (
-              (value ? value: 'No data') +
-              ' on ' +
-              dayjsDate.format('LL')
-            );
-          },
-        },
-      ],
-      [
-        Legend,
-        {
-          width: 400,
-          itemSelector: '#legend-label',
-        },
-      ],
-    ]);
+    <h1 class="text-3xl font-bold underline text-center">
+        Fitness Tracker
+    </h1>
+    <div id="cal-heatmap" class="flex justify-center items-center my-4 text-lg"></div>
+    <div id="legend-label" class="flex justify-center items-center"></div>
+    <script>
+        const cal = new CalHeatmap();
+        cal.paint({
+            data: {
+                source: '/api/daily-sports',
+                type: "json",
+                x: "date",
+                y: "sport",
+                groupY: d => d[0]
+            },
+            domain: {
+                type: 'month',
+                gutter: 8,
+                label: {text: 'MMM', textAlign: 'middle', position: 'top'},
+                subLabel: {
+                    width: 40,
+                    textAlign: 'middle',
+                    text: () => dayjs.weekdaysShort().map((d, i) => (i % 2 == 0 ? d : d)),
+                },
+            },
+            subDomain: {
+                type: 'ghDay',
+                radius: 2,
+                width: 15,
+                height: 15,
+                label: 'D',
+                gutter: 4
+            },
+            date: {
+                start: new Date('2022-12-25'),
+                timezone: 'Europe/Zurich'
+            },
+            range: 12,
+            scale: {
+                color: {
+                    domain: ['Fitness', 'Swimming', 'Football', 'Hiking', 'Running', 'Cycling', 'Yoga', 'Pilates', 'HIIT', 'Others'],
+                    type: 'ordinal',
+                    scheme: 'Spectral',
+                }
+            }
+        }, [
+            [
+                Tooltip,
+                {
+                    text: function (date, value, dayjsDate) {
+                        return (
+                            (value ? value : 'No data') +
+                            ' on ' +
+                            dayjsDate.format('LL')
+                        );
+                    },
+                },
+            ],
+            [
+                Legend,
+                {
+                    width: 400,
+                    itemSelector: '#legend-label',
+                },
+            ],
+        ]);
     // render(<div id="cal-heatmap"></div>);
-  </script>
+    </script>
 </body>
 
 </html>
