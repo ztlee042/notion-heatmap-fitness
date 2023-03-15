@@ -14,73 +14,95 @@
 </head>
 
 <body>
-    <h1 class="text-3xl font-bold underline text-center">
-        Fitness Tracker
+    <h1 id="plotTitle" class="text-3xl font-bold underline text-center">
+        Title
     </h1>
     <div id="cal-heatmap" class="flex justify-center items-center my-4 text-lg"></div>
     <div id="legend-label" class="flex justify-center items-center"></div>
     <script>
-        const cal = new CalHeatmap();
-        cal.paint({
-            data: {
-                source: '/api/daily-sports',
-                type: "json",
-                x: "date",
-                y: "sport",
-                groupY: d => d[0]
-            },
-            domain: {
-                type: 'month',
-                gutter: 8,
-                label: {text: 'MMM', textAlign: 'middle', position: 'top'},
-                subLabel: {
-                    width: 40,
-                    textAlign: 'middle',
-                    text: () => dayjs.weekdaysShort().map((d, i) => (i % 2 == 0 ? d : d)),
-                },
-            },
-            subDomain: {
-                type: 'ghDay',
-                radius: 2,
-                width: 15,
-                height: 15,
-                label: 'D',
-                gutter: 4
-            },
-            date: {
-                start: new Date('2022-12-25'),
-                timezone: 'Europe/Zurich'
-            },
-            range: 12,
-            scale: {
-                color: {
-                    domain: ['Fitness', 'Swimming', 'Football', 'Hiking', 'Running', 'Cycling', 'Yoga', 'Pilates', 'HIIT', 'Others'],
-                    type: 'ordinal',
-                    scheme: 'Spectral',
-                }
+        async function updateHeading() {
+            const response = await fetch('/api/title');
+            const title = await response.json();
+
+            const heading = document.getElementById("plotTitle");
+
+            if (title) {
+                heading.innerText = title;
             }
-        }, [
-            [
-                Tooltip,
-                {
-                    text: function (date, value, dayjsDate) {
-                        return (
-                            (value ? value : 'No data') +
-                            ' on ' +
-                            dayjsDate.format('LL')
-                        );
+        }
+
+        updateHeading();
+    </script>
+    <script>
+        async function paintCalendar() {
+            const response = await fetch('/api/daily-sports');
+            const dataSet = await response.json();
+            const sports = dataSet.map(d => d.sport).filter((value, index, self) => self.indexOf(value) === index);
+            const scaleDomain = sports.length ? sports : ['No data'];
+
+            const cal = new CalHeatmap();
+            cal.paint({
+                data: {
+                    source: dataSet,
+                    type: "json",
+                    x: "date",
+                    y: "sport",
+                    groupY: d => d[0]
+                },
+                domain: {
+                    type: 'month',
+                    gutter: 8,
+                    label: {text: 'MMM', textAlign: 'middle', position: 'top'},
+                    subLabel: {
+                        width: 40,
+                        textAlign: 'middle',
+                        text: () => dayjs.weekdaysShort().map((d, i) => (i % 2 == 0 ? d : d)),
                     },
                 },
-            ],
-            [
-                Legend,
-                {
-                    width: 400,
-                    itemSelector: '#legend-label',
+                subDomain: {
+                    type: 'ghDay',
+                    radius: 2,
+                    width: 15,
+                    height: 15,
+                    label: 'D',
+                    gutter: 4
                 },
-            ],
-        ]);
-    // render(<div id="cal-heatmap"></div>);
+                date: {
+                    start: new Date('2022-12-25'),
+                    timezone: 'Europe/Zurich'
+                },
+                range: 12,
+                scale: {
+                    color: {
+                        domain: scaleDomain,
+                        type: 'ordinal',
+                        scheme: 'Spectral',
+                    }
+                }
+            }, [
+                [
+                    Tooltip,
+                    {
+                        text: function (date, value, dayjsDate) {
+                            return (
+                                (value ? value : 'No data') +
+                                ' on ' +
+                                dayjsDate.format('LL')
+                            );
+                        },
+                    },
+                ],
+                [
+                    Legend,
+                    {
+                        width: 400,
+                        itemSelector: '#legend-label',
+                    },
+                ],
+            ]);
+        }
+
+        paintCalendar();
     </script>
 </body>
 
